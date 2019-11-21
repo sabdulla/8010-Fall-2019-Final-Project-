@@ -1,0 +1,19 @@
+def corr_mat_list(df_in, num_list = [], dum_list = [], threshold = 0):
+    """function take the project dataframe,  one numerical and one dummy featrue list you want to test. 
+       It will return a correlation matrix for your information. 
+       Meanwhile, if you want to get a feature list whose absolut value is above your expectcted number in term of SalePrice, 
+       you can pass a threshold value to the funtion. It will generate a list object above the threshold"""
+    df_num = df[num_list]
+    df_dum = pd.get_dummies(df[dum_list])
+    df_tot = df_num.merge(df_dum, left_index = True, right_index = True)
+    corr_mat = df_tot.corr()
+    corr_list = corr_mat.SalePrice[abs(corr_mat.SalePrice) > threshold].index
+    return  corr_mat, corr_list
+
+
+# belowe is a sample for the function
+corr_mat, corr_list =  corr_mat_list (df, ["LotArea", "SalePrice"], ["Street", "SaleType", "Neighborhood"], .2)
+
+corr_mat
+corr_list
+    
