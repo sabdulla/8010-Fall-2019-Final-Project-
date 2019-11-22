@@ -1,0 +1,15 @@
+def corr_plot (df_in, x_feature, y_feature, x_dummy = False, y_dummy = False):
+    """This function is to generate correlation figs. Pass your dataframe and two features you want to plot.
+    Specify dummy or not for each feature as well. """
+    if x_dummy == False and y_dummy == False:
+        sns.regplot(df_in[x_feature], df_in[y_feature], color = "green")
+    elif x_dummy == True and y_dummy == False:
+        sns.boxplot(df_in[x_feature], df_in[y_feature])
+    elif x_dummy == False and y_dummy == True:
+        sns.boxplot(df_in[y_feature], df_in[x_feature])
+    else:
+        sns.scatterplot(df_in[x_feature], df_in[y_feature], color = "purple")
+
+# sample
+corr_plot(df, "1stFlrSF", "SalePrice", False, False)
+
