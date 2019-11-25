@@ -1,5 +1,5 @@
-Here are the feature columns based on the target column and threshold stated: 
-SalePrice                1.000000
+Here are the feature columns based on the target column and threshold > 0.2: 
+SalePrice                1.000000 <- Target
 OverallQual              0.790982
 GrLivArea                0.708624
 GarageCars               0.640409
@@ -73,4 +73,4 @@ PavedDrive_N             0.212630
 Foundation_BrkTil        0.204117
 
 Feature Variables Count: 
-72
+71
