@@ -22,16 +22,16 @@ train_df = pd.read_csv(r'C:\Vaibhav\Graduate College Programs\Georgia State\MSA 
 replace_nans_lotfrontage = train_df['LotFrontage'].fillna((train_df['LotFrontage'].mean()), inplace=True)
 replace_nans_MasVnrType = train_df['MasVnrType'].fillna('None', inplace=True)
 replace_nans_MasVnrArea = train_df['MasVnrArea'].fillna((train_df['MasVnrArea'].mean()), inplace=True)
-replace_nans_BsmtQual = train_df['BsmtQual'].fillna('None', inplace=True)
-replace_nans_BsmtCond = train_df['BsmtCond'].fillna('None', inplace=True)
-replace_nans_BsmtExposure = train_df['BsmtExposure'].fillna('None', inplace=True)
-replace_nans_BsmtFinType1 = train_df['BsmtFinType1'].fillna('None', inplace=True)
-replace_nans_BsmtFinType2 = train_df['BsmtFinType2'].fillna('None', inplace=True)
-replace_nans_Electrical = train_df['Electrical'].fillna('None', inplace=True)
-replace_nans_GarageType = train_df['GarageType'].fillna('None', inplace=True)
-replace_nans_GarageFinish = train_df['GarageFinish'].fillna('None', inplace=True)
-replace_nans_GarageQual = train_df['GarageQual'].fillna('None', inplace=True)
-replace_nans_GarageCond = train_df['GarageCond'].fillna('None', inplace=True)
+replace_nans_BsmtQual = train_df['BsmtQual'].fillna('NA', inplace=True)
+replace_nans_BsmtCond = train_df['BsmtCond'].fillna('NA', inplace=True)
+replace_nans_BsmtExposure = train_df['BsmtExposure'].fillna('NA', inplace=True)
+replace_nans_BsmtFinType1 = train_df['BsmtFinType1'].fillna('NA', inplace=True)
+replace_nans_BsmtFinType2 = train_df['BsmtFinType2'].fillna('NA', inplace=True)
+replace_nans_Electrical = train_df['Electrical'].fillna('NA', inplace=True)
+replace_nans_GarageType = train_df['GarageType'].fillna('NA', inplace=True)
+replace_nans_GarageFinish = train_df['GarageFinish'].fillna('NA', inplace=True)
+replace_nans_GarageQual = train_df['GarageQual'].fillna('NA', inplace=True)
+replace_nans_GarageCond = train_df['GarageCond'].fillna('NA', inplace=True)
 
 # Dropping columns with too many NaN values
 train_df_updated = train_df.drop(columns=['Alley', 'FireplaceQu', 'PoolQC', 'Fence', 'MiscFeature', 'GarageYrBlt'])
@@ -44,7 +44,7 @@ train_df_updated2 = pd.get_dummies(train_df_updated, columns=['MSZoning', 'Stree
                                                               'RoofStyle', 'RoofMatl', 'Exterior1st', 'Exterior2nd',
                                                               'MasVnrType', 'ExterQual', 'ExterCond', 'Foundation',
                                                               'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1',
-                                                              'BsmtFinType2', 'Heating',	'HeatingQC', 'CentralAir',
+                                                              'BsmtFinType2', 'Heating', 'HeatingQC', 'CentralAir',
                                                               'Electrical', 'KitchenQual', 'Functional', 'GarageType',
                                                               'GarageFinish', 'GarageQual', 'GarageCond', 'PavedDrive',
                                                               'SaleType', 'SaleCondition'])
@@ -111,16 +111,10 @@ def find_feature_results(feature_train_corr, target_col, threshold):
 
     print('')
     print('Here are the feature columns based on the target column and threshold stated: ')
-    print(feature_cols)
+    print(feature_cols.sort_values(ascending=False))
     print('')
     print('Feature Variables Count: ')
     print(len(feature_cols))
 
 
 # find_feature_results(get_corrs(train_df_updated2), 'SalePrice', 0.2)
-
-
-# Next Step
-# As per the assumption of Linear Regression, the independent variables must be uncorrelated with each other.
-# Find correlation of each feature variable with other feature variables to narrow down feature variable list for model
-# testing
