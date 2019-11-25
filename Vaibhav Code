@@ -1,0 +1,126 @@
+# Load libraries
+import pandas as pd
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Setting display options for pycharm result window
+# pd.set_option('display.width', 8000)
+pd.set_option('display.max_columns', 85)
+pd.set_option("display.max_rows", 999)
+
+# Loading the dataset. Enter the appropriate file path
+train_df = pd.read_csv(r'C:\Vaibhav\Graduate College Programs\Georgia State\MSA 8010\Project\train.csv')
+
+# Clean up NaN values in dataset
+replace_nans_lotfrontage = train_df['LotFrontage'].fillna((train_df['LotFrontage'].mean()), inplace=True)
+replace_nans_MasVnrType = train_df['MasVnrType'].fillna('None', inplace=True)
+replace_nans_MasVnrArea = train_df['MasVnrArea'].fillna((train_df['MasVnrArea'].mean()), inplace=True)
+replace_nans_BsmtQual = train_df['BsmtQual'].fillna('None', inplace=True)
+replace_nans_BsmtCond = train_df['BsmtCond'].fillna('None', inplace=True)
+replace_nans_BsmtExposure = train_df['BsmtExposure'].fillna('None', inplace=True)
+replace_nans_BsmtFinType1 = train_df['BsmtFinType1'].fillna('None', inplace=True)
+replace_nans_BsmtFinType2 = train_df['BsmtFinType2'].fillna('None', inplace=True)
+replace_nans_Electrical = train_df['Electrical'].fillna('None', inplace=True)
+replace_nans_GarageType = train_df['GarageType'].fillna('None', inplace=True)
+replace_nans_GarageFinish = train_df['GarageFinish'].fillna('None', inplace=True)
+replace_nans_GarageQual = train_df['GarageQual'].fillna('None', inplace=True)
+replace_nans_GarageCond = train_df['GarageCond'].fillna('None', inplace=True)
+
+# Dropping columns with too many NaN values
+train_df_updated = train_df.drop(columns=['Alley', 'FireplaceQu', 'PoolQC', 'Fence', 'MiscFeature', 'GarageYrBlt'])
+
+# As per my understanding, none of the categorical variables have specific ordering scheme.
+# Using One-Hot Encoding method instead of Label Encoding method <- correct in my opinion
+train_df_updated2 = pd.get_dummies(train_df_updated, columns=['MSZoning', 'Street', 'LotShape', 'LandContour',
+                                                              'Utilities', 'LotConfig', 'LandSlope', 'Neighborhood',
+                                                              'Condition1', 'Condition2', 'BldgType', 'HouseStyle',
+                                                              'RoofStyle', 'RoofMatl', 'Exterior1st', 'Exterior2nd',
+                                                              'MasVnrType', 'ExterQual', 'ExterCond', 'Foundation',
+                                                              'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1',
+                                                              'BsmtFinType2', 'Heating',	'HeatingQC', 'CentralAir',
+                                                              'Electrical', 'KitchenQual', 'Functional', 'GarageType',
+                                                              'GarageFinish', 'GarageQual', 'GarageCond', 'PavedDrive',
+                                                              'SaleType', 'SaleCondition'])
+
+# print(train_df_updated2)
+
+
+# Converting categorical variables to numerical variables using label encoding <- incorrect in my opinion
+def label_encoding(df):
+    obj_cols = df.dtypes.pipe(lambda x: x[x == 'object']).index
+    label_encode = LabelEncoder()
+
+    for cat_var in obj_cols:
+        df[cat_var] = label_encode.fit_transform(df[cat_var])
+
+    print(df)
+
+
+# label_encoding(train_df_updated)
+
+
+# Initial Heatmap
+def get_initial_heatmap(df):
+    # Calculating correlation of initial data frame w/label encoding <- incorrect in my opinion
+    init_train_corr = df.corr(method='pearson')
+    print(init_train_corr)
+
+    # Configure heat map of Pearson Correlation
+    fig, ax = plt.subplots(figsize=(16, 16))
+    ax.xaxis.tick_top()
+    ax.set_xlabel('X LABEL')
+    ax.xaxis.set_label_position('top')
+    sns.heatmap(init_train_corr, xticklabels=True, yticklabels=True, vmin=0, vmax=1, ax=ax, linewidths=.5, cmap='YlGn')
+
+    # Configure x and y ticks if needed
+    plt.yticks(rotation=0, fontsize='8', va='center')
+    plt.show()
+
+
+# get_initial_heatmap(train_df_updated)
+
+
+# Feature selection done via the Filter Method
+# Choose the appropriate features (columns) using Pearson Correlation Matrix
+def get_corrs(df):
+    # Calculating correlation of updated data frame 2 w/one-hot encoding <- correct in my opinion
+    final_train_corr = df.corr(method='pearson')
+    print('Here is the correlation matrix: ')
+    print('')
+    print(final_train_corr)
+
+    return final_train_corr
+
+
+# get_corrs(train_df_updated2)
+
+# Finding feature variables function
+def find_feature_results(feature_train_corr, target_col, threshold):
+    # Correlation with target variable - SalesPrice
+    train_target = abs(feature_train_corr[target_col])
+
+    # Setting correlation target higher than 0.2
+    feature_cols = train_target[train_target > threshold]
+
+    print('')
+    print('Here are the feature columns based on the target column and threshold stated: ')
+    print(feature_cols)
+    print('')
+    print('Feature Variables Count: ')
+    print(len(feature_cols))
+
+
+# find_feature_results(get_corrs(train_df_updated2), 'SalePrice', 0.2)
+
+
+# Next Step
+# As per the assumption of Linear Regression, the independent variables must be uncorrelated with each other.
+# Find correlation of each feature variable with other feature variables to narrow down feature variable list for model
+# testing
