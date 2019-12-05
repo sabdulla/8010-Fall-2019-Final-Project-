@@ -1,0 +1,133 @@
+training xgboost
+In [ ]:
+
+import xgboost as xgb
+In [29]:
+
+%%time
+# tuning n_estimators
+cv_params = {'n_estimators': [250, 275, 300, 325, 350]}
+other_params = {'learning_rate': 0.1, 'n_estimators': 500, 'max_depth': 5, 'min_child_weight': 1, 'seed': 0,
+                    'subsample': 0.8, 'colsample_bytree': 0.8, 'gamma': 0, 'reg_alpha': 0, 'reg_lambda': 1}
+xg_reg = xgb.XGBRegressor(**other_params)
+opt_xg_reg = GridSearchCV(estimator = xg_reg, param_grid = cv_params, scoring='neg_mean_absolute_error', cv=5, verbose=1, n_jobs=4)
+opt_xg_reg.fit(df_train_clean, df_train_target)
+opt_xg_reg.best_params_
+Fitting 5 folds for each of 5 candidates, totalling 25 fits
+[Parallel(n_jobs=4)]: Using backend LokyBackend with 4 concurrent workers.
+[Parallel(n_jobs=4)]: Done  25 out of  25 | elapsed:  1.3min finished
+[11:37:06] WARNING: src/objective/regression_obj.cu:152: reg:linear is now deprecated in favor of reg:squarederror.
+CPU times: user 7.23 s, sys: 79.7 ms, total: 7.31 s
+Wall time: 1min 25s
+Out[29]:
+{'n_estimators': 300}
+In [30]:
+
+%%time
+#tuning max_depth, min_child_weight
+cv_params = {'max_depth': [3, 4, 5, 6, 7, 8, 9, 10], 'min_child_weight': [1, 2, 3, 4, 5, 6]}
+other_params = {'learning_rate': 0.1, 'n_estimators': 300, 'max_depth': 5, 'min_child_weight': 1, 'seed': 0,
+                    'subsample': 0.8, 'colsample_bytree': 0.8, 'gamma': 0, 'reg_alpha': 0, 'reg_lambda': 1}
+xg_reg = xgb.XGBRegressor(**other_params)
+opt_xg_reg = GridSearchCV(estimator = xg_reg, param_grid = cv_params, scoring='neg_mean_absolute_error', cv=5, verbose=1, n_jobs=4)
+opt_xg_reg.fit(df_train_clean, df_train_target)
+opt_xg_reg.best_params_
+Fitting 5 folds for each of 48 candidates, totalling 240 fits
+[Parallel(n_jobs=4)]: Using backend LokyBackend with 4 concurrent workers.
+[Parallel(n_jobs=4)]: Done  42 tasks      | elapsed:  1.7min
+[Parallel(n_jobs=4)]: Done 192 tasks      | elapsed: 10.6min
+[Parallel(n_jobs=4)]: Done 240 out of 240 | elapsed: 14.2min finished
+[11:52:56] WARNING: src/objective/regression_obj.cu:152: reg:linear is now deprecated in favor of reg:squarederror.
+CPU times: user 6.55 s, sys: 120 ms, total: 6.67 s
+Wall time: 14min 17s
+Out[30]:
+{'max_depth': 3, 'min_child_weight': 1}
+In [31]:
+
+%%time
+#tuning gamma
+cv_params = {'gamma': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]}
+other_params = {'learning_rate': 0.1, 'n_estimators': 300, 'max_depth': 3, 'min_child_weight': 1, 'seed': 0,
+                    'subsample': 0.8, 'colsample_bytree': 0.8, 'gamma': 0, 'reg_alpha': 0, 'reg_lambda': 1}
+xg_reg = xgb.XGBRegressor(**other_params)
+opt_xg_reg = GridSearchCV(estimator = xg_reg, param_grid = cv_params, scoring='neg_mean_absolute_error', cv=5, verbose=1, n_jobs=4)
+opt_xg_reg.fit(df_train_clean, df_train_target)
+opt_xg_reg.best_params_
+Fitting 5 folds for each of 6 candidates, totalling 30 fits
+[Parallel(n_jobs=4)]: Using backend LokyBackend with 4 concurrent workers.
+[Parallel(n_jobs=4)]: Done  30 out of  30 | elapsed:  1.0min finished
+[11:56:10] WARNING: src/objective/regression_obj.cu:152: reg:linear is now deprecated in favor of reg:squarederror.
+CPU times: user 5.22 s, sys: 57 ms, total: 5.28 s
+Wall time: 1min 7s
+Out[31]:
+{'gamma': 0.1}
+In [38]:
+
+%%time
+#tuning subsample colsample_bytree
+cv_params = {'subsample': [0.6, 0.7, 0.8, 0.9], 'colsample_bytree': [0.6, 0.7, 0.8, 0.9]}
+other_params = {'learning_rate': 0.1, 'n_estimators': 300, 'max_depth': 3, 'min_child_weight': 1, 'seed': 0,
+                    'subsample': 0.8, 'colsample_bytree': 0.8, 'gamma':0.1, 'reg_alpha': 0, 'reg_lambda': 1}
+xg_reg = xgb.XGBRegressor(**other_params)
+opt_xg_reg = GridSearchCV(estimator = xg_reg, param_grid = cv_params, scoring='neg_mean_absolute_error', cv=5, verbose=1, n_jobs=4)
+opt_xg_reg.fit(df_train_clean, df_train_target)
+opt_xg_reg.best_params_
+Fitting 5 folds for each of 4 candidates, totalling 20 fits
+[Parallel(n_jobs=4)]: Using backend LokyBackend with 4 concurrent workers.
+[Parallel(n_jobs=4)]: Done  20 out of  20 | elapsed:   50.8s finished
+[12:25:21] WARNING: src/objective/regression_obj.cu:152: reg:linear is now deprecated in favor of reg:squarederror.
+CPU times: user 5.55 s, sys: 229 ms, total: 5.78 s
+Wall time: 56.1 s
+Out[38]:
+{'colsample_bytree': 0.9, 'subsample': 0.9}
+In [34]:
+
+%%time
+#tuning reg_alpha reg_lambda
+cv_params = {'reg_alpha': [0.05, 0.1, 1, 2, 3], 'reg_lambda': [0.05, 0.1, 1, 2, 3]}
+other_params = {'learning_rate': 0.1, 'n_estimators': 300, 'max_depth': 3, 'min_child_weight': 1, 'seed': 0,
+                    'subsample': 0.9, 'colsample_bytree': 0.9, 'gamma':0.1, 'reg_alpha': 0, 'reg_lambda': 1}
+xg_reg = xgb.XGBRegressor(**other_params)
+opt_xg_reg = GridSearchCV(estimator = xg_reg, param_grid = cv_params, scoring='neg_mean_absolute_error', cv=5, verbose=1, n_jobs=4)
+opt_xg_reg.fit(df_train_clean, df_train_target)
+opt_xg_reg.best_params_
+Fitting 5 folds for each of 4 candidates, totalling 20 fits
+[Parallel(n_jobs=4)]: Using backend LokyBackend with 4 concurrent workers.
+[Parallel(n_jobs=4)]: Done  20 out of  20 | elapsed:   43.4s finished
+[12:09:12] WARNING: src/objective/regression_obj.cu:152: reg:linear is now deprecated in favor of reg:squarederror.
+CPU times: user 5.44 s, sys: 28.2 ms, total: 5.47 s
+Wall time: 48.5 s
+Out[34]:
+{'reg_alpha': 0.05}
+In [35]:
+
+%%time
+#tuning learning_rate
+cv_params = {'learning_rate':[0.01, 0.05, 0.07, 0.1, 0.2]}
+other_params = {'learning_rate': 0.1, 'n_estimators': 300, 'max_depth': 3, 'min_child_weight': 1, 'seed': 0,
+                    'subsample': 0.9, 'colsample_bytree': 0.9, 'gamma':0.1, 'reg_alpha': 0.05, 'reg_lambda': 1}
+xg_reg = xgb.XGBRegressor(**other_params)
+opt_xg_reg = GridSearchCV(estimator = xg_reg, param_grid = cv_params, scoring='neg_mean_absolute_error', cv=5, verbose=1, n_jobs=4)
+opt_xg_reg.fit(df_train_clean, df_train_target)
+opt_xg_reg.best_params_
+Fitting 5 folds for each of 5 candidates, totalling 25 fits
+[Parallel(n_jobs=4)]: Using backend LokyBackend with 4 concurrent workers.
+[Parallel(n_jobs=4)]: Done  25 out of  25 | elapsed:  1.0min finished
+[12:10:35] WARNING: src/objective/regression_obj.cu:152: reg:linear is now deprecated in favor of reg:squarederror.
+CPU times: user 5.54 s, sys: 31.4 ms, total: 5.57 s
+Wall time: 1min 6s
+Out[35]:
+{'learning_rate': 0.1}
+In [36]:
+
+other_params = {'learning_rate': 0.1, 'n_estimators': 300, 'max_depth': 3, 'min_child_weight': 1, 'seed': 0,
+                    'subsample': 0.9, 'colsample_bytree': 0.9, 'gamma':0.1, 'reg_alpha': 0.05, 'reg_lambda': 1}
+xg_reg = xgb.XGBRegressor(**other_params)
+xg_reg.fit(df_train_clean, df_train_target)
+y_test_predict = xg_reg.predict(df_test_clean)
+MAPE = sum(abs(np.array(df_test_target)-y_test_predict)/np.array(df_test_target))/df_test_target.shape[0]
+MAPE
+
+[12:12:10] WARNING: src/objective/regression_obj.cu:152: reg:linear is now deprecated in favor of reg:squarederror.
+Out[36]:
+0.08548229279429131
